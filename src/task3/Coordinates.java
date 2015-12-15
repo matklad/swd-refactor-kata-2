@@ -1,32 +1,63 @@
 package task3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Coordinates {
+  private Point x;
+  private Point y;
+  private Direction direction;
+  private List<Obstacle> obstacles;
+
+  public void setPoint(Point p, int axis) {
+    if (axis == 0) {
+      x = p;
+      return;
+    } else if (axis == 1) {
+      y = p;
+      return;
+    }
+    throw new IllegalArgumentException();
+  }
+
+  public Point getPoint(int axis) {
+    if (axis == 0) {
+      return x;
+    } else if (axis == 1) {
+      return y;
+    }
+    throw new IllegalArgumentException();
+  }
+
+
   public Point getX() {
-    throw new UnsupportedOperationException();
+    return x;
   }
 
   public Point getY() {
-    throw new UnsupportedOperationException();
+    return y;
   }
 
   public void setDirection(Direction value) {
-    throw new UnsupportedOperationException();
+    direction = value;
   }
+
   public Direction getDirection() {
-    throw new UnsupportedOperationException();
+    return direction;
   }
 
   public void setObstacles(List<Obstacle> value) {
-    throw new UnsupportedOperationException();
+    obstacles = new ArrayList<>(value);
   }
 
-  public Coordinates(Point xValue,
-                     Point yValue,
-                     Direction directionValue,
-                     List<Obstacle> obstaclesValue) {
-    throw new UnsupportedOperationException();
+  public Coordinates(Point x,
+                     Point y,
+                     Direction direction,
+                     List<Obstacle> obstacles) {
+    this.x = x;
+    this.y = y;
+    this.direction = direction;
+    this.obstacles = new ArrayList<>(obstacles);
   }
 
   @Override
@@ -34,4 +65,8 @@ public class Coordinates {
     throw new UnsupportedOperationException();
   }
 
+  public boolean hasObstacleAt(Point px, Point py) {
+    return obstacles.stream()
+        .anyMatch((it) -> it.x == px.getLocation() && it.y == py.getLocation());
+  }
 }
