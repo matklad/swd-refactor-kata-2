@@ -21,18 +21,24 @@ public class Customer {
   }
 
   public String statement() {
-    String result = "Rental Record for " + getName() + "\n";
+    StringBuilder result = new StringBuilder();
+    result.append("Rental Record for ").append(getName())
+        .append("\n");
 
     for (Rental each : rentals) {
-      result += "\t" + each.getMovie().getTitle() +
-          "\t" + String.valueOf(each.calculate()) +
-          "\n";
+      result
+          .append("\t").append(each.getMovie().getTitle())
+          .append("\t").append(String.valueOf(each.calculate()))
+          .append("\n");
     }
 
-    result += "You owed " + String.valueOf(getTotalAmount()) + "\n";
-    result += "You earned " + String.valueOf(getFrequentRenterPoints()) + " frequent renter points\n";
+    result.append("You owed ")
+        .append(String.valueOf(getTotalAmount())).append("\n");
 
-    return result;
+    result.append("You earned ")
+        .append(String.valueOf(getFrequentRenterPoints())).append(" frequent renter points\n");
+
+    return result.toString();
   }
 
   private double getTotalAmount() {
