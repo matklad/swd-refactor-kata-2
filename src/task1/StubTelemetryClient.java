@@ -40,7 +40,7 @@ public class StubTelemetryClient implements TelemetryClient
     {
       throw new IllegalArgumentException();
     }
-
+    // BUG here! Let's not fix it: we are testing Telemetry Control
     if (message == DIAGNOSTIC_MESSAGE)
     {
       // simulate a status report

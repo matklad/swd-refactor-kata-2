@@ -2,8 +2,7 @@ package task1;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class TelemetryDiagnosticControlsTest {
   @Test
@@ -26,7 +25,7 @@ public class TelemetryDiagnosticControlsTest {
     controls.checkTransmission();
   }
 
-  @Test(expected = Exception.class)
+  @Test(expected = TelemetryException.class)
   public void testThrowsWhenConnectingToBrokenClient() throws Exception {
     TelemetryDiagnosticControls controls = new TelemetryDiagnosticControls(new TelemetryClient() {
       @Override
@@ -36,6 +35,26 @@ public class TelemetryDiagnosticControlsTest {
     });
 
     controls.checkTransmission();
+  }
+
+  @Test
+  public void testClearsDiagnosticMessage() throws Exception {
+    TelemetryDiagnosticControls controls = new TelemetryDiagnosticControls(new TelemetryClient() {
+      @Override
+      public boolean getOnlineStatus() {
+        return false;
+      }
+    });
+
+    controls.setDiagnosticInfo("should be cleared");
+    boolean thrown = false;
+    try {
+      controls.checkTransmission();
+    } catch (TelemetryException e) {
+      thrown = true;
+    }
+    assertTrue(thrown);
+    assertEquals("", controls.getDiagnosticInfo());
   }
 
   @Test
@@ -67,7 +86,7 @@ public class TelemetryDiagnosticControlsTest {
     assertEquals("AT#UD", client.message);
   }
 
-  @Test(expected = Exception.class)
+  @Test(expected = TelemetryException.class)
   public void testVerifiesConnection() throws Exception {
     class TestTelemetryClient implements TelemetryClient {
       boolean isOnline = false;
@@ -89,6 +108,7 @@ public class TelemetryDiagnosticControlsTest {
     class TestTelemetryClient implements TelemetryClient {
       String state = "connected";
       int nMethodCalls = 0;
+
       @Override
       public void disconnect() {
         assertEquals("connected", state);
@@ -120,7 +140,7 @@ public class TelemetryDiagnosticControlsTest {
         assertEquals("send", state);
         state = "received";
         nMethodCalls++;
-        return "";
+        return "You have a message";
       }
     }
 
@@ -130,5 +150,6 @@ public class TelemetryDiagnosticControlsTest {
 
     assertEquals(client.state, "received");
     assertEquals(4, client.nMethodCalls);
+    assertEquals("You have a message", controls.getDiagnosticInfo());
   }
 }
