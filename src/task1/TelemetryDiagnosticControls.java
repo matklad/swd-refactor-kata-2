@@ -7,9 +7,13 @@ public class TelemetryDiagnosticControls
   private final TelemetryClient telemetryClient;
   private String diagnosticInfo = "";
 
+  public TelemetryDiagnosticControls(TelemetryClient telemetryClient) {
+    this.telemetryClient = telemetryClient;
+  }
+
   public TelemetryDiagnosticControls()
   {
-    telemetryClient = new TelemetryClient();
+    telemetryClient = new StubTelemetryClient();
   }
 
   public String getDiagnosticInfo(){
@@ -27,18 +31,18 @@ public class TelemetryDiagnosticControls
     telemetryClient.disconnect();
 
     int retryLeft = 3;
-    while (telemetryClient.getOnlineStatus() == false && retryLeft > 0)
+    while (!telemetryClient.getOnlineStatus() && retryLeft > 0)
     {
       telemetryClient.connect(DiagnosticChannelConnectionString);
       retryLeft -= 1;
     }
 
-    if(telemetryClient.getOnlineStatus() == false)
+    if(!telemetryClient.getOnlineStatus())
     {
       throw new Exception("Unable to connect.");
     }
 
-    telemetryClient.send(TelemetryClient.DIAGNOSTIC_MESSAGE);
+    telemetryClient.send(StubTelemetryClient.DIAGNOSTIC_MESSAGE);
     diagnosticInfo = telemetryClient.receive();
   }
 }
